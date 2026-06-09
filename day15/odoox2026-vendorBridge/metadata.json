@@ -1,0 +1,6 @@
+{
+  "name": "VendorBridge",
+  "description": "A high-performance Dark ERP dashboard for procurement, vendor management, RFQs, and interactive purchase order analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

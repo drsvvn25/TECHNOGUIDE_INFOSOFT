@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Generator | AI Business Tool</title>
+  <meta name="description" content="Generate professional GST invoices and download them as PDF. Manage your invoice history with ease." />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">⚡ AI Business Tool</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house me-1"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" href="invoice.html"><i class="fa-solid fa-file-invoice me-1"></i>Invoices</a></li>
+        <li class="nav-item"><a class="nav-link" href="caption.html"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Captions</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<div class="container">
+  <div class="page-header">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="hero-badge mb-2">📄 Invoice Manager</div>
+        <h1>Invoice Generator</h1>
+        <p class="text-secondary mb-0">Create professional GST invoices and export them as PDF</p>
+      </div>
+      <button class="btn btn-primary" id="btnNewInvoice" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+        <i class="fa-solid fa-plus me-2"></i>New Invoice
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container pb-5">
+  <div class="row g-4">
+
+    <!-- Invoice History -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <h5 class="mb-0"><i class="fa-solid fa-list me-2" style="color:#818cf8"></i>Invoice History</h5>
+          <div class="d-flex gap-2 flex-wrap">
+            <div class="search-bar">
+              <i class="fa-solid fa-search search-icon"></i>
+              <input type="text" class="form-control form-control-sm" id="searchInvoice" placeholder="Search invoices..." style="width:220px" />
+            </div>
+            <select class="form-select form-select-sm" id="filterStatus" style="width:130px">
+              <option value="">All Status</option>
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Company</th>
+                  <th>Client</th>
+                  <th>Date</th>
+                  <th>Subtotal</th>
+                  <th>GST</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesBody">
+                <tr><td colspan="9" class="text-center py-5 text-muted">Loading invoices...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Create Invoice Modal ───────────────────────────────────── -->
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+      <div class="modal-header" style="border-color:var(--border)">
+        <h5 class="modal-title" id="invoiceModalLabel"><i class="fa-solid fa-file-invoice me-2" style="color:#818cf8"></i>Create New Invoice</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="invoiceForm">
+          <div class="row g-3">
+            <!-- Company Info -->
+            <div class="col-12"><h6 class="text-secondary mb-1" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:.08em">🏢 Company Information</h6><hr style="border-color:var(--border)"/></div>
+            <div class="col-md-4">
+              <label class="form-label">Company Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="companyName" placeholder="Tech Solutions Pvt Ltd" required />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Company Email</label>
+              <input type="email" class="form-control" id="companyEmail" placeholder="info@techsolutions.com" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Company Address</label>
+              <input type="text" class="form-control" id="companyAddress" placeholder="123 Business Park, Mumbai" />
+            </div>
+
+            <!-- Client Info -->
+            <div class="col-12 mt-2"><h6 class="text-secondary mb-1" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:.08em">👤 Client Information</h6><hr style="border-color:var(--border)"/></div>
+            <div class="col-md-4">
+              <label class="form-label">Client Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="clientName" placeholder="ABC Pvt Ltd" required />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Client Email</label>
+              <input type="email" class="form-control" id="clientEmail" placeholder="client@example.com" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Client Address</label>
+              <input type="text" class="form-control" id="clientAddress" placeholder="Client full address" />
+            </div>
+
+            <!-- Dates & Tax -->
+            <div class="col-12 mt-2"><h6 class="text-secondary mb-1" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:.08em">📅 Invoice Details</h6><hr style="border-color:var(--border)"/></div>
+            <div class="col-md-4">
+              <label class="form-label">Invoice Date</label>
+              <input type="date" class="form-control" id="invoiceDate" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Due Date</label>
+              <input type="date" class="form-control" id="dueDate" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">GST / Tax %</label>
+              <input type="number" class="form-control" id="taxPercentage" value="18" min="0" max="100" />
+            </div>
+
+            <!-- Items -->
+            <div class="col-12 mt-2">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="text-secondary mb-0" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:.08em">📦 Products / Services</h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="addItemBtn"><i class="fa-solid fa-plus me-1"></i>Add Row</button>
+              </div>
+              <hr style="border-color:var(--border)"/>
+              <div class="table-responsive">
+                <table class="table items-table mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width:40%">Description</th>
+                      <th style="width:15%">Qty</th>
+                      <th style="width:20%">Price (₹)</th>
+                      <th style="width:15%">Total (₹)</th>
+                      <th style="width:10%"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="itemsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="col-12">
+              <div class="d-flex justify-content-end">
+                <div style="min-width:280px;background:var(--bg-input);border-radius:var(--radius-sm);padding:1.2rem;border:1px solid var(--border)">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Subtotal:</span>
+                    <span id="displaySubtotal">₹ 0.00</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">GST (<span id="displayTaxPct">18</span>%):</span>
+                    <span id="displayTax">₹ 0.00</span>
+                  </div>
+                  <hr style="border-color:var(--border);margin:0.5rem 0" />
+                  <div class="d-flex justify-content-between">
+                    <strong style="font-size:1.05rem">Total:</strong>
+                    <strong style="font-size:1.15rem;color:#818cf8" id="displayTotal">₹ 0.00</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="col-12">
+              <label class="form-label">Notes (Optional)</label>
+              <textarea class="form-control" id="invoiceNotes" rows="2" placeholder="Payment terms, bank details, thank you note..."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="border-color:var(--border)">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveInvoiceBtn"><i class="fa-solid fa-floppy-disk me-2"></i>Save Invoice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Preview Modal ──────────────────────────────────────────── -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)">
+      <div class="modal-header" style="border-color:var(--border)">
+        <h5 class="modal-title"><i class="fa-solid fa-eye me-2" style="color:#818cf8"></i>Invoice Preview</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="invoicePreviewContent"></div>
+      </div>
+      <div class="modal-footer" style="border-color:var(--border)">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="downloadPdfBtn"><i class="fa-solid fa-download me-2"></i>Download PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="js/invoice.js"></script>
+</body>
+</html>

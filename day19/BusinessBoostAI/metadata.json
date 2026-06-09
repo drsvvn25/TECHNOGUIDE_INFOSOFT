@@ -1,0 +1,6 @@
+{
+  "name": "BusinessBoost AI",
+  "description": "An interactive workspace for startups and freelancers featuring AI-powered content generation, dynamic invoicing, customer CRM, financial analytics, and visual setting customizers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

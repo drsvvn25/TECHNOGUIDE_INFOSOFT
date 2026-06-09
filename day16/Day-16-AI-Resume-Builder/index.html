@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Resume Builder – Generate ATS-friendly, professional resumes with AI assistance and multiple templates." />
+  <title>Day-16 AI Resume Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/templates.css" />
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⚡</span>
+        <div>
+          <h1 class="brand-title">AI Resume Builder</h1>
+          <p class="brand-sub">Day 16 – TechnoGuide InfoSoft</p>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="btn btn-ghost" id="btnLoadSample">📂 Load Sample</button>
+        <button class="btn btn-ghost" id="btnClearForm">🗑 Clear</button>
+        <button class="btn btn-primary" id="btnExportPDF">⬇ Export PDF</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== MAIN LAYOUT ===== -->
+  <main class="app-layout">
+
+    <!-- LEFT PANEL: FORM -->
+    <section class="form-panel" id="formPanel">
+
+      <!-- ATS Score Card -->
+      <div class="ats-card" id="atsCard">
+        <div class="ats-score-ring">
+          <svg viewBox="0 0 80 80" class="ring-svg">
+            <circle cx="40" cy="40" r="34" class="ring-bg"/>
+            <circle cx="40" cy="40" r="34" class="ring-fill" id="ringFill"/>
+          </svg>
+          <span class="ats-score-number" id="atsScoreNum">0</span>
+        </div>
+        <div class="ats-info">
+          <h3>ATS Score</h3>
+          <p id="atsLabel">Fill the form to see your score</p>
+          <div class="ats-tags" id="atsTags"></div>
+        </div>
+      </div>
+
+      <!-- Template Selector -->
+      <div class="section-card">
+        <h2 class="section-title">🎨 Choose Template</h2>
+        <div class="template-grid" id="templateGrid">
+          <label class="tmpl-card active" data-tmpl="modern">
+            <input type="radio" name="template" value="modern" checked hidden />
+            <div class="tmpl-preview tmpl-modern-prev"></div>
+            <span>Modern Dev</span>
+          </label>
+          <label class="tmpl-card" data-tmpl="corporate">
+            <input type="radio" name="template" value="corporate" hidden />
+            <div class="tmpl-preview tmpl-corporate-prev"></div>
+            <span>Corporate Pro</span>
+          </label>
+          <label class="tmpl-card" data-tmpl="creative">
+            <input type="radio" name="template" value="creative" hidden />
+            <div class="tmpl-preview tmpl-creative-prev"></div>
+            <span>Creative Tech</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Personal Info -->
+      <div class="section-card">
+        <h2 class="section-title">👤 Personal Information</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" placeholder="Arjun Sharma" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" placeholder="arjun@email.com" />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone *</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label for="linkedin">LinkedIn</label>
+            <input type="url" id="linkedin" placeholder="linkedin.com/in/arjun-sharma" />
+          </div>
+          <div class="form-group full-width">
+            <label for="portfolio">Portfolio / GitHub</label>
+            <input type="url" id="portfolio" placeholder="github.com/arjunsharma" />
+          </div>
+          <div class="form-group full-width">
+            <label for="location">Location</label>
+            <input type="text" id="location" placeholder="Mumbai, Maharashtra" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="section-card">
+        <h2 class="section-title">📝 Professional Summary</h2>
+        <div class="form-group">
+          <textarea id="summary" rows="4" placeholder="Write a brief professional summary or let AI generate one..."></textarea>
+        </div>
+        <button class="btn btn-ai" id="btnAISummary">✨ AI Generate Summary</button>
+      </div>
+
+      <!-- Skills -->
+      <div class="section-card">
+        <h2 class="section-title">🛠 Skills</h2>
+        <div class="form-group">
+          <label for="skills">Technical Skills (comma-separated)</label>
+          <input type="text" id="skills" placeholder="Python, React, Node.js, SQL, Git, AWS" />
+        </div>
+        <div class="form-group">
+          <label for="softSkills">Soft Skills</label>
+          <input type="text" id="softSkills" placeholder="Leadership, Communication, Problem-solving" />
+        </div>
+        <button class="btn btn-ai btn-sm" id="btnAISkills">✨ AI Enhance Skills</button>
+      </div>
+
+      <!-- Education -->
+      <div class="section-card">
+        <h2 class="section-title">🎓 Education</h2>
+        <div id="educationList"></div>
+        <button class="btn btn-outline btn-sm" id="btnAddEdu">+ Add Education</button>
+      </div>
+
+      <!-- Experience -->
+      <div class="section-card">
+        <h2 class="section-title">💼 Experience</h2>
+        <div id="experienceList"></div>
+        <button class="btn btn-outline btn-sm" id="btnAddExp">+ Add Experience</button>
+      </div>
+
+      <!-- Projects -->
+      <div class="section-card">
+        <h2 class="section-title">🚀 Projects</h2>
+        <div id="projectList"></div>
+        <button class="btn btn-outline btn-sm" id="btnAddProject">+ Add Project</button>
+      </div>
+
+      <!-- Certifications -->
+      <div class="section-card">
+        <h2 class="section-title">🏆 Certifications</h2>
+        <div id="certList"></div>
+        <button class="btn btn-outline btn-sm" id="btnAddCert">+ Add Certification</button>
+      </div>
+
+      <!-- Achievements -->
+      <div class="section-card">
+        <h2 class="section-title">⭐ Achievements</h2>
+        <div class="form-group">
+          <textarea id="achievements" rows="3" placeholder="• Won 1st place in college hackathon&#10;• Published research paper..."></textarea>
+        </div>
+      </div>
+
+      <!-- Languages -->
+      <div class="section-card">
+        <h2 class="section-title">🌐 Languages</h2>
+        <div class="form-group">
+          <input type="text" id="languages" placeholder="English (Fluent), Hindi (Native), Marathi (Conversational)" />
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <div class="generate-bar">
+        <button class="btn btn-generate" id="btnGenerate">
+          <span class="btn-icon">🤖</span>
+          <span>Generate Resume with AI</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL: PREVIEW -->
+    <section class="preview-panel" id="previewPanel">
+      <div class="preview-toolbar">
+        <h2>Live Preview</h2>
+        <div class="toolbar-actions">
+          <button class="btn btn-ghost btn-sm" id="btnZoomOut">−</button>
+          <span id="zoomLevel">100%</span>
+          <button class="btn btn-ghost btn-sm" id="btnZoomIn">+</button>
+          <button class="btn btn-primary btn-sm" id="btnExportPDF2">⬇ PDF</button>
+        </div>
+      </div>
+      <div class="preview-viewport" id="previewViewport">
+        <div class="resume-paper" id="resumePaper">
+          <!-- Resume content injected by JS -->
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <h3>Your Resume Preview</h3>
+            <p>Fill in the form on the left and click <strong>Generate Resume</strong> to see a live preview here.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AI Thinking Overlay -->
+  <div class="ai-overlay" id="aiOverlay">
+    <div class="ai-loader">
+      <div class="ai-spinner"></div>
+      <p id="aiLoaderText">AI is crafting your resume…</p>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/resumeGenerator.js"></script>
+  <script src="js/pdfExport.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamShield AI - Interactive NLP Laboratory</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                    <span class="logo-text">SpamShield <span class="logo-subtext">AI</span></span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="menu-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#sandbox" class="menu-item" data-tab="sandbox">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Text Sandbox</span>
+                </a>
+                <a href="#dataset" class="menu-item" data-tab="dataset">
+                    <i class="fa-solid fa-database"></i>
+                    <span>Dataset Manager</span>
+                </a>
+                <a href="#education" class="menu-item" data-tab="education">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>How It Works</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="model-badge">
+                    <div class="badge-dot pulse"></div>
+                    <div class="badge-info">
+                        <span class="badge-title">Multinomial NB</span>
+                        <span class="badge-status">Active & Online</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Bar -->
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="page-title">Model Overview</h1>
+                    <p class="header-subtitle" id="page-subtitle">Analyze, train, and inspect Naive Bayes text classification.</p>
+                </div>
+                <div class="header-right">
+                    <button id="btn-reset" class="btn btn-secondary" title="Reset dataset to initial state">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Dataset
+                    </button>
+                </div>
+            </header>
+
+            <!-- Global Status Banners -->
+            <div id="status-banner" class="status-banner hidden">
+                <span id="status-message">Model retrained successfully!</span>
+                <button class="banner-close"><i class="fa-solid fa-times"></i></button>
+            </div>
+
+            <!-- Page Sections -->
+            
+            <!-- SECTION 1: DASHBOARD -->
+            <section id="sect-dashboard" class="tab-content active">
+                <!-- Stat Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon accuracy"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-label">Model Accuracy</span>
+                            <h3 class="stat-value" id="stat-accuracy">--</h3>
+                            <div class="stat-footer text-success">
+                                <span id="stat-accuracy-sub">Test set evaluation</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon f1"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-label">F1-Score (Spam)</span>
+                            <h3 class="stat-value" id="stat-f1">--</h3>
+                            <div class="stat-footer">
+                                <span>Precision / Recall balance</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon dataset-size"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="stat-content">
+                            <span class="stat-label">Training Size</span>
+                            <h3 class="stat-value" id="stat-size">--</h3>
+                            <div class="stat-footer">
+                                <span id="stat-distribution">-- Ham / -- Spam</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left: Interactive Predictor -->
+                    <div class="card predictor-card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fa-solid fa-keyboard text-primary"></i> Live Spam Classifier</h2>
+                            <p class="card-subtitle">Input any message below to run it through the live model.</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-wrapper">
+                                <textarea id="predict-input" placeholder="Type or paste your message here... E.g., 'CONGRATULATIONS! You won a $1000 gift card! Claim now!'" rows="4"></textarea>
+                                <button id="btn-predict" class="btn btn-primary">
+                                    <span>Classify Message</span> <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Prediction Results -->
+                            <div id="predict-result" class="predict-result-box hidden">
+                                <div class="prediction-header">
+                                    <div class="prediction-verdict" id="predict-verdict">
+                                        <span class="verdict-icon"><i class="fa-solid fa-question"></i></span>
+                                        <span class="verdict-text">Unknown</span>
+                                    </div>
+                                    <div class="prediction-score">
+                                        <span class="score-label">Confidence</span>
+                                        <span class="score-value" id="predict-confidence">0%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="probability-bars">
+                                    <div class="prob-row">
+                                        <span class="prob-label">Ham Probability</span>
+                                        <div class="prob-track">
+                                            <div id="prob-ham-fill" class="prob-fill ham" style="width: 50%"></div>
+                                        </div>
+                                        <span class="prob-pct" id="prob-ham-pct">50%</span>
+                                    </div>
+                                    <div class="prob-row">
+                                        <span class="prob-label">Spam Probability</span>
+                                        <div class="prob-track">
+                                            <div id="prob-spam-fill" class="prob-fill spam" style="width: 50%"></div>
+                                        </div>
+                                        <span class="prob-pct" id="prob-spam-pct">50%</span>
+                                    </div>
+                                </div>
+
+                                <div class="quick-process-summary">
+                                    <span class="summary-title">Cleaned tokens:</span>
+                                    <code id="quick-processed-text" class="mono-code">...</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Word Frequencies -->
+                    <div class="card vocab-card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fa-solid fa-chart-simple text-accent"></i> Word Frequency Analysis</h2>
+                            <p class="card-subtitle">Top keywords contributing to classifications.</p>
+                        </div>
+                        <div class="card-body tabs-wrapper">
+                            <div class="vocab-tab-headers">
+                                <button class="vocab-tab-btn active" data-vocab="spam">
+                                    <span class="dot spam"></span> Top Spam Words
+                                </button>
+                                <button class="vocab-tab-btn" data-vocab="ham">
+                                    <span class="dot ham"></span> Top Ham Words
+                                </button>
+                            </div>
+                            
+                            <div class="vocab-tab-content">
+                                <div id="vocab-spam-list" class="vocab-bar-chart">
+                                    <!-- Dynamic bars go here -->
+                                </div>
+                                <div id="vocab-ham-list" class="vocab-bar-chart hidden">
+                                    <!-- Dynamic bars go here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: SANDBOX -->
+            <section id="sect-sandbox" class="tab-content">
+                <div class="card sandbox-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-gears text-primary"></i> Preprocessing Pipeline Playground</h2>
+                        <p class="card-subtitle">Natural Language Processing models cannot understand raw text. This playground visualizes the step-by-step cleaning procedure before vectorization.</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="sandbox-input-area">
+                            <label for="sandbox-input" class="field-label">Test Sentence</label>
+                            <div class="sandbox-input-row">
+                                <input type="text" id="sandbox-input" value="Hey, congratulations! You won a free prize, check this now at 3pm." placeholder="Type a sentence to visualize..." />
+                                <button id="btn-sandbox-run" class="btn btn-primary">Process <i class="fa-solid fa-play"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Pipeline Steps Visualizer -->
+                        <div class="pipeline-flow">
+                            <!-- Step 1: Raw -->
+                            <div class="pipeline-step">
+                                <div class="step-num">1</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Raw Input Text</h4>
+                                        <span class="step-badge">Original</span>
+                                    </div>
+                                    <div class="step-box raw-box" id="step-raw-out">--</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Lowercase -->
+                            <div class="pipeline-step">
+                                <div class="step-num">2</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Case Normalization</h4>
+                                        <span class="step-badge">Lowercase</span>
+                                    </div>
+                                    <p class="step-desc">Converts all letters to lowercase to ensure consistency (e.g., 'FREE', 'Free', and 'free' become identical).</p>
+                                    <div class="step-box code-box" id="step-lowercase-out">--</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Punctuation -->
+                            <div class="pipeline-step">
+                                <div class="step-num">3</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Punctuation Removal</h4>
+                                        <span class="step-badge">Stripping Symbols</span>
+                                    </div>
+                                    <p class="step-desc">Removes punctuation marks such as exclamation points, question marks, commas, and periods to keep only core alphanumeric tokens.</p>
+                                    <div class="step-box code-box" id="step-punctuation-out">--</div>
+                                </div>
+                            </div>
+
+                            <!-- Step 4: Tokenization -->
+                            <div class="pipeline-step">
+                                <div class="step-num">4</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Tokenization</h4>
+                                        <span class="step-badge">Word Splitting</span>
+                                    </div>
+                                    <p class="step-desc">Splits the normalized string into individual units (tokens) based on whitespace.</p>
+                                    <div class="step-box token-container" id="step-tokens-out">
+                                        <!-- Dynamic tokens -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 5: Stopwords -->
+                            <div class="pipeline-step">
+                                <div class="step-num">5</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Stopwords Filtering</h4>
+                                        <span class="step-badge">Noise Reduction</span>
+                                    </div>
+                                    <p class="step-desc">Filters out common filler words in English (e.g. 'the', 'is', 'and', 'at') using the NLTK Stopwords corpus. This highlights the terms carrying high information value.</p>
+                                    <div class="step-box token-container" id="step-stopwords-out">
+                                        <!-- Dynamic tokens with deleted styling -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 6: Vectorization -->
+                            <div class="pipeline-step">
+                                <div class="step-num">6</div>
+                                <div class="step-details">
+                                    <div class="step-header-info">
+                                        <h4 class="step-name">Bag-of-Words Vectorizer Representation</h4>
+                                        <span class="step-badge">Feature Vector</span>
+                                    </div>
+                                    <p class="step-desc">Transforms the cleaned token text into numerical values (token occurrences count vector) using a CountVectorizer, ready for Multinomial Naive Bayes mathematical classification.</p>
+                                    <div class="step-box code-box final-vector" id="step-vector-out">
+                                        <!-- Dynamic representation -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: DATASET MANAGER -->
+            <section id="sect-dataset" class="tab-content">
+                <!-- Grid: Left Add Item, Right Table -->
+                <div class="dataset-layout">
+                    <!-- Add form card -->
+                    <div class="card dataset-add-card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fa-solid fa-plus-circle text-primary"></i> Add Sample</h2>
+                            <p class="card-subtitle">Insert a new labeled sample. The model will automatically retrain.</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="add-sample-form">
+                                <div class="form-group">
+                                    <label for="new-message" class="field-label">Message Content</label>
+                                    <textarea id="new-message" rows="3" placeholder="Enter message text... E.g., 'Please call me when you have a minute.'" required></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="field-label">Classification Label</label>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="new-label" value="ham" checked>
+                                            <span class="radio-custom ham"></span>
+                                            <span>Ham (Safe)</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="new-label" value="spam">
+                                            <span class="radio-custom spam"></span>
+                                            <span>Spam (Junk)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <span>Add & Retrain Model</span> <i class="fa-solid fa-sync"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Dataset Table Card -->
+                    <div class="card dataset-list-card">
+                        <div class="card-header dataset-table-header">
+                            <div>
+                                <h2 class="card-title"><i class="fa-solid fa-list-check text-primary"></i> Training Samples</h2>
+                                <p class="card-subtitle">Inspect existing dataset records.</p>
+                            </div>
+                            <div class="table-actions">
+                                <div class="search-wrapper">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="dataset-search" placeholder="Search messages...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body no-padding table-scroll-container">
+                            <table class="dataset-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 60px;">ID</th>
+                                        <th style="width: 90px;">Label</th>
+                                        <th>Original Message</th>
+                                        <th style="width: 80px; text-align: center;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dataset-tbody">
+                                    <!-- Dynamic rows from API -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: HOW IT WORKS (EDUCATION) -->
+            <section id="sect-education" class="tab-content">
+                <div class="grid-two-col">
+                    <!-- Educational Content -->
+                    <div class="card text-card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fa-solid fa-book-open text-primary"></i> NLP Text Classification Theory</h2>
+                        </div>
+                        <div class="card-body educational-body">
+                            <h3>1. Text Preprocessing</h3>
+                            <p>Computers do not natively understand English text. The raw string must be cleaned and broken down. Preprocessing reduces the vocabulary dimensionality, merging words that mean the same thing and stripping details that have no statistical importance (like punctuation and general filler words like <em>'is'</em>, <em>'the'</em>, and <em>'and'</em>, known as <strong>stopwords</strong>).</p>
+
+                            <h3>2. Feature Extraction (CountVectorizer)</h3>
+                            <p>To train a Machine Learning model, we must convert the cleaned text tokens into numbers. This is done using the <strong>Bag of Words</strong> model. The <code>CountVectorizer</code> calculates the vocabulary of all words in the training dataset, then creates a matrix where each row is a message and each column represents a word from the vocabulary. The cells represent how many times that word appears in the message.</p>
+
+                            <h3>3. Multinomial Naive Bayes Classifier</h3>
+                            <p>The <strong>Multinomial Naive Bayes</strong> classifier is highly suited for document classification. It works using Bayes' Theorem of conditional probability:</p>
+                            <div class="formula-box">
+                                P(Class | Word) = [ P(Word | Class) &times; P(Class) ] / P(Word)
+                            </div>
+                            <p>It is called <em>"Naive"</em> because it assumes that the occurrence of each word is independent of all other words. Despite this simple assumption, Naive Bayes is extremely effective, fast, and works exceptionally well for text applications like spam filters or sentiment analyzers.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Steps summary cards -->
+                    <div class="card text-card">
+                        <div class="card-header">
+                            <h2 class="card-title"><i class="fa-solid fa-list text-primary"></i> Pipeline Summary</h2>
+                        </div>
+                        <div class="card-body">
+                            <ul class="summary-steps-list">
+                                <li>
+                                    <div class="sum-num">1</div>
+                                    <div class="sum-txt">
+                                        <strong>Raw Text Clean-up:</strong> Lowercasing letters and removing punctuation (<code>string.punctuation</code>).
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="sum-num">2</div>
+                                    <div class="sum-txt">
+                                        <strong>Tokenization & Stopwords:</strong> Splitting into tokens and filtering out words from NLTK's English stopword dictionary.
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="sum-num">3</div>
+                                    <div class="sum-txt">
+                                        <strong>Vectorization:</strong> Using <code>CountVectorizer</code> to construct a document-term frequency matrix.
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="sum-num">4</div>
+                                    <div class="sum-txt">
+                                        <strong>Training Split:</strong> Splitting dataset (e.g. 70/30) to compute accuracy on unseen messages.
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="sum-num">5</div>
+                                    <div class="sum-txt">
+                                        <strong>Model Learning:</strong> Fitting a <code>MultinomialNB</code> probability model based on word likelihoods.
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="sum-num">6</div>
+                                    <div class="sum-txt">
+                                        <strong>Active Prediction:</strong> Computing category probabilities (<code>predict_proba</code>) for new user queries.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- NLTK Stopword references in JSON for sandbox tokenization reference -->
+    <script>
+        // Inject a simple list of common stopwords for local token visualization checks
+        window.commonStopwords = ["i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself", "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before", "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"];
+    </script>
+    
+    <!-- Custom Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

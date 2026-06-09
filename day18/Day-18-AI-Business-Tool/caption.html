@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Caption Generator | AI Business Tool</title>
+  <meta name="description" content="Generate AI-powered social media captions for Instagram, LinkedIn, Facebook, and Twitter using Google Gemini." />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="index.html">⚡ AI Business Tool</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item"><a class="nav-link" href="index.html"><i class="fa-solid fa-house me-1"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="invoice.html"><i class="fa-solid fa-file-invoice me-1"></i>Invoices</a></li>
+        <li class="nav-item"><a class="nav-link active" href="caption.html"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>Captions</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<div class="container">
+  <div class="page-header">
+    <div class="hero-badge mb-2">✨ Powered by Gemini AI</div>
+    <h1>AI Caption Generator</h1>
+    <p class="text-secondary mb-0">Generate platform-specific social media captions with hashtags, CTAs, and emojis</p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container pb-5">
+  <div class="row g-4">
+
+    <!-- Generation Form -->
+    <div class="col-lg-4">
+      <div class="card sticky-top" style="top:80px">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fa-solid fa-sliders me-2" style="color:#34d399"></i>Caption Settings</h5>
+        </div>
+        <div class="card-body">
+          <form id="captionForm">
+            <div class="mb-3">
+              <label class="form-label">Business Type <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="businessType" placeholder="e.g. Technology, Fashion, Food..." required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Product / Service Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="productName" placeholder="e.g. AI Automation Suite" required />
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Caption Tone <span class="text-danger">*</span></label>
+              <div class="d-flex flex-column gap-2" id="toneGroup">
+                <label class="tone-option" for="tonePro">
+                  <input type="radio" name="tone" id="tonePro" value="professional" class="d-none" />
+                  <div class="tone-btn" id="toneBtnPro">
+                    <span>💼</span> Professional
+                  </div>
+                </label>
+                <label class="tone-option" for="toneMarketing">
+                  <input type="radio" name="tone" id="toneMarketing" value="marketing" class="d-none" />
+                  <div class="tone-btn" id="toneBtnMarketing">
+                    <span>📣</span> Marketing
+                  </div>
+                </label>
+                <label class="tone-option" for="toneFriendly">
+                  <input type="radio" name="tone" id="toneFriendly" value="friendly" class="d-none" />
+                  <div class="tone-btn" id="toneBtnFriendly">
+                    <span>😊</span> Friendly
+                  </div>
+                </label>
+                <label class="tone-option" for="tonePromo">
+                  <input type="radio" name="tone" id="tonePromo" value="promotional" class="d-none" />
+                  <div class="tone-btn" id="toneBtnPromo">
+                    <span>🎁</span> Promotional
+                  </div>
+                </label>
+                <label class="tone-option" for="toneEdu">
+                  <input type="radio" name="tone" id="toneEdu" value="educational" class="d-none" />
+                  <div class="tone-btn" id="toneBtnEdu">
+                    <span>📚</span> Educational
+                  </div>
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success w-100" id="generateBtn">
+              <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate Captions
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Caption Output -->
+    <div class="col-lg-8">
+      <!-- Generated Output -->
+      <div id="captionOutput" style="display:none">
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0"><i class="fa-solid fa-sparkles me-2" style="color:#34d399"></i>Generated Captions</h5>
+            <span class="badge badge-sent" id="outputToneBadge"></span>
+          </div>
+          <div class="card-body">
+
+            <!-- Instagram -->
+            <div class="platform-card">
+              <div class="platform-header">
+                <span class="platform-badge instagram"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                <button class="btn btn-sm copy-btn" onclick="copyText('igText')"><i class="fa-regular fa-copy me-1"></i>Copy</button>
+              </div>
+              <p class="platform-text mb-0" id="igText">—</p>
+            </div>
+
+            <!-- LinkedIn -->
+            <div class="platform-card">
+              <div class="platform-header">
+                <span class="platform-badge linkedin"><i class="fa-brands fa-linkedin"></i> LinkedIn</span>
+                <button class="btn btn-sm copy-btn" onclick="copyText('liText')"><i class="fa-regular fa-copy me-1"></i>Copy</button>
+              </div>
+              <p class="platform-text mb-0" id="liText">—</p>
+            </div>
+
+            <!-- Facebook -->
+            <div class="platform-card">
+              <div class="platform-header">
+                <span class="platform-badge facebook"><i class="fa-brands fa-facebook"></i> Facebook</span>
+                <button class="btn btn-sm copy-btn" onclick="copyText('fbText')"><i class="fa-regular fa-copy me-1"></i>Copy</button>
+              </div>
+              <p class="platform-text mb-0" id="fbText">—</p>
+            </div>
+
+            <!-- Twitter -->
+            <div class="platform-card">
+              <div class="platform-header">
+                <span class="platform-badge twitter"><i class="fa-brands fa-x-twitter"></i> X (Twitter)</span>
+                <button class="btn btn-sm copy-btn" onclick="copyText('twText')"><i class="fa-regular fa-copy me-1"></i>Copy</button>
+              </div>
+              <p class="platform-text mb-0" id="twText">—</p>
+            </div>
+
+            <!-- Hashtags, CTA, Emojis -->
+            <div class="row g-3 mt-1">
+              <div class="col-md-5">
+                <div style="background:var(--bg-input);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);height:100%">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <small class="text-secondary fw-semibold">🏷️ Hashtags</small>
+                    <button class="btn btn-sm copy-btn" onclick="copyHashtags()"><i class="fa-regular fa-copy me-1"></i>Copy</button>
+                  </div>
+                  <div id="hashtagsContainer">—</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="background:var(--bg-input);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);height:100%">
+                  <small class="text-secondary fw-semibold d-block mb-2">📢 Call To Action</small>
+                  <p class="mb-0" id="ctaText" style="font-size:0.9rem">—</p>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div style="background:var(--bg-input);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--border);height:100%">
+                  <small class="text-secondary fw-semibold d-block mb-2">😄 Emojis</small>
+                  <div id="emojisContainer">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Placeholder when no output yet -->
+      <div id="captionPlaceholder">
+        <div class="card" style="min-height:400px;display:flex;align-items:center;justify-content:center">
+          <div class="empty-state">
+            <div class="empty-icon">✨</div>
+            <h5 class="text-secondary">Fill in the form and click Generate</h5>
+            <p class="text-muted" style="font-size:0.85rem">AI-powered captions for 4 platforms will appear here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved History -->
+      <div class="card mt-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2" style="color:#34d399"></i>Caption History</h5>
+          <button class="btn btn-sm btn-outline-secondary" onclick="loadCaptionHistory()"><i class="fa-solid fa-rotate me-1"></i>Refresh</button>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th>Business</th>
+                  <th>Product</th>
+                  <th>Tone</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="captionHistoryBody">
+                <tr><td colspan="5" class="text-center py-4 text-muted">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<style>
+.tone-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 0.87rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.tone-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+input[type="radio"]:checked + .tone-btn {
+  border-color: var(--secondary);
+  background: rgba(16,185,129,0.12);
+  color: #34d399;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/caption.js"></script>
+</body>
+</html>

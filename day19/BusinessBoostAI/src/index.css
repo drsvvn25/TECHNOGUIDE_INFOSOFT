@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Custom palette aligned with design system */
+  --color-brand-bg: #0b1326;
+  --color-brand-surface: #171f33;
+  --color-brand-surface-high: #222a3d;
+  --color-brand-surface-highest: #2d3449;
+  --color-brand-primary: #c3c0ff;
+  --color-brand-primary-container: #4f46e5;
+  --color-brand-secondary: #4edea3;
+  --color-brand-tertiary: #89ceff;
+  --color-brand-error: #ffb4ab;
+  --color-brand-outline: #918fa1;
+  --color-brand-on-surface: #dae2fd;
+  --color-brand-on-surface-variant: #c7c4d8;
+}
+
+body {
+  background-color: var(--color-brand-bg);
+  color: var(--color-brand-on-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-card {
+  background: rgba(23, 31, 51, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(195, 192, 255, 0.08);
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.18), transparent 45%),
+              radial-gradient(circle at bottom left, rgba(78, 222, 163, 0.06), transparent 40%);
+}
+
+.glow-indigo {
+  box-shadow: 0 0 25px rgba(79, 70, 229, 0.35);
+}
+
+.glow-mint {
+  box-shadow: 0 0 20px rgba(78, 222, 163, 0.25);
+}
+
+/* Scrollbar customizations */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-outline-variant, #464555);
+  border-radius: 9999px;
+}
